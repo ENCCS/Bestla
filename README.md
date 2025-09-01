@@ -3,7 +3,7 @@ This repository provides a containerized deployment of Slurm, featuring one cont
 
 To run it, type:
 ```bash
-docker run -it -p 28888:8888 johan/slurm
+docker run -it -p 28888:8888 slurm-jupyter
 ```
 
 Next, open http://localhost:28888, use **enccs** as password. 
@@ -29,5 +29,5 @@ c341049db665
 
 ## Building container
 ```bash
-docker build -t johan/slurm .
+docker build -t slurm-jupyter .
 ```

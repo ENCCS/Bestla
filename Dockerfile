@@ -8,6 +8,7 @@ RUN apt-get install -y software-properties-common
 RUN add-apt-repository ppa:deadsnakes/ppa
 RUN apt-get update
 RUN DEBIAN_FRONTEND="noninteractive" TZ="Europe/Stockholm" apt-get install -y python3.11 npm wget vim curl python3.11-venv python3.11-distutils
+# Install EESSI-related packages
 RUN wget https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/cvmfs-release-latest_all.deb
 RUN dpkg -i cvmfs-release-latest_all.deb
 RUN rm -f cvmfs-release-latest_all.deb
@@ -16,8 +17,6 @@ RUN apt-get install -y cvmfs
 RUN wget https://github.com/EESSI/filesystem-layer/releases/download/latest/cvmfs-config-eessi_latest_all.deb
 RUN dpkg -i cvmfs-config-eessi_latest_all.deb
 RUN rm cvmfs-config-eessi_latest_all.deb
-RUN bash -c "echo 'CVMFS_CLIENT_PROFILE="single"' > /etc/cvmfs/default.local"
-RUN bash -c "echo 'CVMFS_QUOTA_LIMIT=10000' >> /etc/cvmfs/default.local"
 RUN apt-get clean
 RUN python3.11 -m ensurepip --upgrade
 RUN python3.11 -m pip install jupyterlab jupyterthemes --break-system-packages
@@ -26,9 +25,7 @@ RUN python3.11 -m pip install jupyterlab jupyterthemes --break-system-packages
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash \
     && export NVM_DIR="$HOME/.nvm" \
     && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" \
-    && nvm install --lts \
-    && nvm use --lts
-
+    && nvm install --lts \ && nvm use --lts
 # Ensure nvm is loaded in the environment for all following layers
 ENV NVM_DIR=/root/.nvm
 ENV NODE_VERSION=12
@@ -69,5 +66,9 @@ RUN chmod 600 /etc/slurm/slurmdbd.conf
 #RUN DEBIAN_FRONTEND="noninteractive" TZ="Europe/Stockholm" apt-get install -y fakeroot libfakeroot libfuse3-3 liblzo2-2 squashfs-tools uidmap
 
 ENV JUPYTER_TOKEN enccs
+# Set up EESSI environment
+RUN bash -c "echo 'CVMFS_CLIENT_PROFILE="single"' > /etc/cvmfs/default.local"
+RUN bash -c "echo 'CVMFS_QUOTA_LIMIT=10000' >> /etc/cvmfs/default.local"
+RUN mkdir /cvmfs/software.eessi.io
 
 ENTRYPOINT ["/entrypoint.sh"]

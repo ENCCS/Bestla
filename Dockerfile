@@ -7,7 +7,7 @@ RUN apt-get update
 RUN apt-get install -y software-properties-common
 RUN add-apt-repository ppa:deadsnakes/ppa
 RUN apt-get update
-RUN DEBIAN_FRONTEND="noninteractive" TZ="Europe/Stockholm" apt-get install -y python3.11 npm wget vim curl python3.11-venv python3.11-distutils
+RUN DEBIAN_FRONTEND="noninteractive" TZ="Europe/Stockholm" apt-get install -y python3.11 npm wget vim openssh-server sudo curl python3.11-venv python3.11-distutils
 RUN apt-get clean
 RUN python3.11 -m ensurepip --upgrade
 RUN python3.11 -m pip install jupyterlab jupyterthemes --break-system-packages
@@ -28,7 +28,7 @@ ENV PATH=$NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 RUN . "$NVM_DIR/nvm.sh" && nvm install $NODE_VERSION && nvm use $NODE_VERSION
 RUN node -v && npm -v
 
-ENV NODE\_OPTIONS --experimental-worker
+ENV NODE\_OPTIONS="--experimental-worker"
 RUN jupyter notebook --generate-config
 
 RUN DEBIAN_FRONTEND="noninteractive" TZ="Europe/Stockholm" apt-get install -y munge mariadb-client mariadb-server libmariadb-dev slurmdbd slurmd slurmctld libpmix-dev dbus
@@ -40,11 +40,10 @@ RUN chown munge:munge /etc/munge/munge.key
 RUN chmod 600 /etc/munge/munge.key
 
 # Setup Slurm environment
-RUN mkdir -p /etc/slurm 
 COPY cgroup.conf /etc/slurm
 COPY slurmdbd.conf /etc/slurm/slurmdbd.conf
 COPY slurm.conf /etc/slurm/slurm.conf
-COPY entrypoint.sh /entrypoint.sh
+COPY entrypoint.sh /entrypoint.sh 
 RUN mkdir -p /var/run/slurm 
 RUN mkdir -p /var/lib/slurm/slurmctld
 RUN chmod 755 /var/lib/slurm/slurmctld
@@ -55,9 +54,19 @@ RUN chmod +x /entrypoint.sh
 RUN chmod 755 /var/run/slurm
 RUN chmod 600 /etc/slurm/slurmdbd.conf
 
+# Setup files for new user, sshd and webserver
+RUN mkdir -p /etc/slurm && mkdir -p /etc/config/webpages
+RUN useradd -ms /bin/bash aiuser && mkdir -p /home/aiuser
+COPY webpages/server.js /etc/config/webpages/server.js
+
+RUN mkdir -p /run/sshd /var/run/sshd && \
+    sed -i 's/^#Port 22/Port 8822/' /etc/ssh/sshd_config && \
+    sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config && \
+    sed -i 's/^#PubkeyAuthentication yes/PubkeyAuthentication yes/' /etc/ssh/sshd_config && \
+    sed -i 's/^#PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config
+
+EXPOSE 8822
+ENTRYPOINT ["/entrypoint.sh"]
+
 # Install Apptainer/Singularity
 #RUN DEBIAN_FRONTEND="noninteractive" TZ="Europe/Stockholm" apt-get install -y fakeroot libfakeroot libfuse3-3 liblzo2-2 squashfs-tools uidmap
-
-ENV JUPYTER_TOKEN enccs
-
-ENTRYPOINT ["/entrypoint.sh"]

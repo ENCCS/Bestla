@@ -77,8 +77,46 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-echo "Starting Jupyter Lab..."
-jupyter lab --allow-root --ip 0.0.0.0 --notebook-dir /
+echo "Starting web service..."
+node /etc/config/webpages/server.js &
+if [ $? -ne 0 ]; then
+    echo "Error: Failed to start Node.js web service"
+    exit 1
+fi
+
+echo "Starting SSH service..."
+/usr/sbin/sshd -D -p 8822 &
+if [ $? -ne 0 ]; then
+    echo "Error: Failed to start SSH service"
+    exit 1
+fi
+
+echo "Starting Jupyter Lab in the background..."
+sudo -u aiuser nohup jupyter lab --ip 0.0.0.0 --notebook-dir /home/aiuser --no-browser > jupyter.log 2>&1 &
+if [ $? -ne 0 ]; then
+    echo "Error: Failed to start Jupyter Lab"
+    exit 1
+fi
+
+echo "Jupyter Lab is running in the background. Check jupyter.log for details."
+
+# Wait a moment for Jupyter to start and get the token
+sleep 5
+
+# Check if the token can be retrieved
+sudo -u aiuser jupyter server list 2> /dev/null | grep -oP 'token=\K[a-f0-9]+' > /home/aiuser/jupyter-token
+if [ ! -s /home/aiuser/jupyter-token ]; then
+    echo "Error: Failed to retrieve Jupyter token"
+    exit 1
+fi
+mv /home/aiuser/jupyter-token /etc/config/jupyter-token # This is a workaround since jupyter is userspace and nodejs is at systemspace
+
+# Ensure SSH keys directories are created correctly
+sudo -u aiuser nohup mkdir -p /home/aiuser/.ssh && touch /home/aiuser/.ssh/authorized_keys && chmod 700 /home/aiuser/.ssh/ && chmod 600 /home/aiuser/.ssh/authorized_keys
+if [ $? -ne 0 ]; then
+    echo "Error: Failed to set up SSH authorized_keys"
+    exit 1
+fi
 
 echo "All services started successfully. Keeping container running..."
 

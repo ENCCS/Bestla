@@ -1,10 +1,11 @@
 # Virtual Training Environment for HPC
-This repository provides a containerized software stack for introducing new users into HPC environments without the need of accessing real systems. The VTE contains the following softwares and features installed as of v0.1:
+This repository provides a containerized software stack for introducing new users into HPC environments without the need of accessing real systems. The VTE contains the following software and features installed as of v0.1:
 
 * SLURM (in standalone mode, 1 node)
 * JupyterLab (userspace)
 * NodeJS (web serving)
 * OpenSSH server
+* [EESSI](https://www.eessi.io/docs/) stack for scientific software
 
 Pieced together, these softwares allow the user to follow the typical HPC workflow for access: inserting a public key into a portal, SSH into non-conventional ports (e.g. 8822, used by MeluXina), submit code in SLURM, and access Jupyter when necessary.
 
@@ -12,15 +13,16 @@ Pieced together, these softwares allow the user to follow the typical HPC workfl
 The requirement for the execution of the code is solely Docker, which can be installed following the [instructions](https://docs.docker.com/engine/install/) according to your operating system. The code should also work on Windows Subsystem for Linux, which is preferred than the native Docker for Windows. This has not been tested in Podman.
 
 You can either build the image (see section below) or download directly the image from Dockerhub. The image is only available for x86 architecture as of Sep. 4th, 2025. To download the image, try: *(temporary repository)*
-```bash
+
 docker pull raijenki/slurm:latest
 ```
 
 After obtaining the image, one may run:
 ```bash
-sudo docker run -it -d --network host raijenki/slurm
+sudo docker run -it -d --network host --device /dev/fuse --cap-add SYS_ADMIN raijenki/slurm
 ```
 
+The `SYS_ADMIN` flag is needed to be able to mount the EESSI software stack within the container.
 This will execute the container on the background, let it run for around 30 seconds to 1 minute before proceeding so all the services can properly start. Docker will make use of the same network as the host, avoiding the necessary hassle of exposing ports manually. If, however, this is necessary for some reason, one might need then to expose the ports 8888 (Jupyter), 8822 (SSH) and 8080 (NodeJS). An alternative one liner is:
 
 ```bash

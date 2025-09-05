@@ -18,17 +18,22 @@ You can either build the image (see section below) or download directly the imag
 docker pull raijenki/slurm:latest
 ```
 
-After obtaining the image, one may run:
+After obtaining the image, and running for the first time, create the persistent volume:
+```bash
+sudo docker volume create homedir 
+```
+
+And to execute the container, finally run:
 
 ```bash
-sudo docker run -it -d --network host --device /dev/fuse --cap-add SYS_ADMIN --name slurm raijenki/slurm
+sudo docker run -it -d --network host --device /dev/fuse --cap-add SYS_ADMIN -v homedir:/home/aiuser --name slurm raijenki/slurm
 ```
 
 The `SYS_ADMIN` flag is needed to be able to mount the EESSI software stack within the container.
 This will execute the container on the background, let it run for around 30 seconds to 1 minute before proceeding so all the services can properly start. Docker will make use of the same network as the host, avoiding the necessary hassle of exposing ports manually. If, however, this is necessary for some reason, one might need then to expose the ports 8888 (Jupyter), 8822 (SSH) and 8080 (NodeJS). An alternative one liner is:
 
 ```bash
-sudo docker run -it --p 28888:8888 --p 28889:8080 --p 28890:8822 raijenki/slurm
+sudo docker run -it --p 28888:8888 --p 28889:8080 --p 28890:8822 --device /dev/fuse --cap-add SYS_ADMIN -v homedir:/home/aiuser raijenki/slurm
 ```
 
 ### Using the Environment

@@ -14,10 +14,12 @@ The requirement for the execution of the code is solely Docker, which can be ins
 
 You can either build the image (see section below) or download directly the image from Dockerhub. The image is only available for x86 architecture as of Sep. 4th, 2025. To download the image, try: *(temporary repository)*
 
+```bash
 docker pull raijenki/slurm:latest
 ```
 
 After obtaining the image, one may run:
+
 ```bash
 sudo docker run -it -d --network host --device /dev/fuse --cap-add SYS_ADMIN --name slurm raijenki/slurm
 ```

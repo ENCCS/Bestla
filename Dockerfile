@@ -72,6 +72,7 @@ ENV JUPYTER_TOKEN enccs
 RUN bash -c "echo 'CVMFS_CLIENT_PROFILE="single"' > /etc/cvmfs/default.local"
 RUN bash -c "echo 'CVMFS_QUOTA_LIMIT=10000' >> /etc/cvmfs/default.local"
 RUN mkdir /cvmfs/software.eessi.io
+RUN echo "source /cvmfs/software.eessi.io/versions/2023.06/init/bash" >> /home/aiuser/.bashrc
 RUN mkdir -p /run/sshd /var/run/sshd && \
     sed -i 's/^#Port 22/Port 8822/' /etc/ssh/sshd_config && \
     sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config && \

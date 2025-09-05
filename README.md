@@ -19,7 +19,7 @@ docker pull raijenki/slurm:latest
 
 After obtaining the image, one may run:
 ```bash
-sudo docker run -it -d --network host --device /dev/fuse --cap-add SYS_ADMIN raijenki/slurm
+sudo docker run -it -d --network host --device /dev/fuse --cap-add SYS_ADMIN --name slurm raijenki/slurm
 ```
 
 The `SYS_ADMIN` flag is needed to be able to mount the EESSI software stack within the container.
@@ -47,17 +47,9 @@ enccs*       up   infinite      1   idle localhost
 An alternative to connecting is using the terminal directly from Jupyterlab, or submitting jobs in Python to slurm as well. This can be done through the service portal located in the same link described above.
 
 ### Killing the Service
-Execute ```docker ps``` and first get the container name.
 
 ```bash
-CONTAINER ID   IMAGE          COMMAND            CREATED          STATUS          PORTS     NAMES
-a056c70ef7ec   76f9bb4f6167   "/entrypoint.sh"   52 minutes ago   Up 52 minutes             thirsty_mclaren
-```
-
-In this case, the Docker has assigned the name ```thirsty_mclaren``` to the container. We can kill it directly by using the command below:
-
-```bash
-docker container kill thirsty_mclaren
+docker container kill slurm
 ```
 
 

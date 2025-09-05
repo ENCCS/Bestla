@@ -6,7 +6,7 @@ service --status-all
 
 echo "Mounting EESSI software stack..."
 mount -t cvmfs software.eessi.io /cvmfs/software.eessi.io
-source /cvmfs/software.eessi.io/versions/23.06/init/bash
+source /cvmfs/software.eessi.io/versions/2023.06/init/bash
 
 echo "Starting MariaDB service..."
 service mariadb start

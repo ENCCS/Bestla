@@ -6,7 +6,8 @@ service --status-all
 
 echo "Mounting EESSI software stack..."
 mount -t cvmfs software.eessi.io /cvmfs/software.eessi.io
-source /cvmfs/software.eessi.io/versions/2023.06/init/bash
+# Make sure that module command is available when user ssh's inside the container
+sudo -u aiuser echo "source /cvmfs/software.eessi.io/versions/2023.06/init/bash" > /home/aiuser/.bashrc
 
 echo "Starting MariaDB service..."
 service mariadb start

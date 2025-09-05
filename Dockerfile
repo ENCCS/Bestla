@@ -10,13 +10,13 @@ RUN apt-get update
 RUN DEBIAN_FRONTEND="noninteractive" TZ="Europe/Stockholm" apt-get install -y python3.11 npm wget vim curl python3.11-venv python3.11-distutils nano openssh-server sudo
 # Install EESSI-related packages
 RUN wget https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/cvmfs-release_4.5-1_all.deb
-RUN dpkg -i cvmfs-release-latest_all.deb
-RUN rm -f cvmfs-release-latest_all.deb
+RUN dpkg -i cvmfs-release_4.5-1_all.deb
+RUN rm -f cvmfs-release_4.5-1_all.deb
 RUN apt-get update
 RUN apt-get install -y cvmfs
 RUN wget https://github.com/EESSI/filesystem-layer/releases/download/v0.5.0/cvmfs-config-eessi_0.5.0_all.deb
-RUN dpkg -i cvmfs-config-eessi_latest_all.deb
-RUN rm cvmfs-config-eessi_latest_all.deb
+RUN dpkg -i cvmfs-config-eessi_0.5.0_all.deb
+RUN rm cvmfs-config-eessi_0.5.0_all.deb
 RUN apt-get clean
 RUN python3.11 -m ensurepip --upgrade
 RUN python3.11 -m pip install jupyterlab jupyterthemes --break-system-packages
@@ -25,7 +25,7 @@ RUN python3.11 -m pip install jupyterlab jupyterthemes --break-system-packages
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash \
     && export NVM_DIR="$HOME/.nvm" \
     && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" \
-    && nvm install --lts \ && nvm use --lts
+    && nvm install --lts && nvm use --lts
 # Ensure nvm is loaded in the environment for all following layers
 ENV NVM_DIR=/root/.nvm
 ENV NODE_VERSION=12

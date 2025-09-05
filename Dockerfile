@@ -7,14 +7,14 @@ RUN apt-get update
 RUN apt-get install -y software-properties-common
 RUN add-apt-repository ppa:deadsnakes/ppa
 RUN apt-get update
-RUN DEBIAN_FRONTEND="noninteractive" TZ="Europe/Stockholm" apt-get install -y python3.11 npm wget vim curl python3.11-venv python3.11-distutils
+RUN DEBIAN_FRONTEND="noninteractive" TZ="Europe/Stockholm" apt-get install -y python3.11 npm wget vim curl python3.11-venv python3.11-distutils nano
 # Install EESSI-related packages
-RUN wget https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/cvmfs-release-latest_all.deb
+RUN wget https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/cvmfs-release_4.5-1_all.deb
 RUN dpkg -i cvmfs-release-latest_all.deb
 RUN rm -f cvmfs-release-latest_all.deb
 RUN apt-get update
 RUN apt-get install -y cvmfs
-RUN wget https://github.com/EESSI/filesystem-layer/releases/download/latest/cvmfs-config-eessi_latest_all.deb
+RUN wget https://github.com/EESSI/filesystem-layer/releases/download/v0.5.0/cvmfs-config-eessi_0.5.0_all.deb
 RUN dpkg -i cvmfs-config-eessi_latest_all.deb
 RUN rm cvmfs-config-eessi_latest_all.deb
 RUN apt-get clean

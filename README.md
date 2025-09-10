@@ -53,6 +53,22 @@ enccs*       up   infinite      1   idle localhost
 
 An alternative to connecting is using the terminal directly from Jupyterlab, or submitting jobs in Python to slurm as well. This can be done through the service portal located in the same link described above.
 
+### Running Applications
+
+Two benchmarks are included in this environment, within the ```/scratch/aiuser/apps``` folder: DGEMM (matrix multiplication) and STREAM (memory bandwidth), and can be found within the ```apps``` folder. To build DGEMM, one first need to load OpenBLAS via the EESSI command:
+
+```bash
+module load OpenBLAS/0.3.24-GCC-13.2.0 
+```
+
+After BLAS is loaded, you can build the application by running ```make``` directly, and then execute the available script (```run_dgemm.sh```) for slurm in the same folder:
+
+```bash
+sbatch run_dgemm.sh 
+```  
+
+A similar procedure applies for the STREAM, but it is not necessary to load the OpenBLAS before compiling it.
+
 ### Killing the Service
 
 ```bash

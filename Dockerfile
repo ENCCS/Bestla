@@ -62,10 +62,11 @@ RUN chmod 755 /var/run/slurm
 RUN chmod 600 /etc/slurm/slurmdbd.conf
 
 # Setup files for new user, sshd and webserver
-RUN mkdir -p /etc/slurm && mkdir -p /etc/config/webpages
+RUN mkdir -p /etc/slurm && mkdir -p /etc/config/webpages && mkdir -p /scratch/aiuser
 RUN useradd -ms /bin/bash aiuser && mkdir -p /home/aiuser
 COPY webpages/server.js /etc/config/webpages/server.js
-
+COPY apps/ /scratch/aiuser/apps/
+RUN chown -R aiuser:aiuser /scratch/aiuser/
 
 ENV JUPYTER_TOKEN enccs
 # Set up EESSI environment

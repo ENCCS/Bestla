@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sed -i "s/REPLACE_IT/CPUs=$(nproc)/g" /etc/slurm/slurm.conf
+sed -i "s/REPLACE_IT/CPUs=$(($(nproc)-8))/g" /etc/slurm/slurm.conf
 
 service --status-all
 

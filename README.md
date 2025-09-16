@@ -1,4 +1,8 @@
 # Virtual Training Environment for HPC
+[![DOI](https://zenodo.org/badge/1048340445.svg)](https://doi.org/10.5281/zenodo.17131964)
+
+
+
 This repository provides a containerized software stack for introducing new users into HPC environments without the need of accessing real systems. The VTE contains the following software and features installed as of v0.1:
 
 * SLURM (in standalone mode, 1 node)
